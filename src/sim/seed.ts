@@ -2,6 +2,11 @@ import { index3D } from './grid';
 import { createState, type SimState } from './state';
 
 export type SeedKind = 'single' | 'double' | 'noise';
+export type ResourceProfile = 'uniform' | 'gradient-x';
+
+export type SeedOptions = Readonly<{
+  resourceProfile?: ResourceProfile;
+}>;
 
 function mulberry32(seed: number): () => number {
   let t = seed >>> 0;
@@ -30,8 +35,14 @@ function addBlob(state: SimState, cx: number, cy: number, cz: number, radius: nu
   }
 }
 
-export function createSeededState(size = { x: 32, y: 32, z: 32 }, kind: SeedKind = 'single', seed = 1): SimState {
+export function createSeededState(
+  size = { x: 32, y: 32, z: 32 },
+  kind: SeedKind = 'single',
+  seed = 1,
+  options: SeedOptions = {},
+): SimState {
   const state = createState(size);
+  const resourceProfile = options.resourceProfile ?? 'uniform';
   state.resource.fill(1);
   const rng = mulberry32(seed);
 
@@ -47,12 +58,13 @@ export function createSeededState(size = { x: 32, y: 32, z: 32 }, kind: SeedKind
     }
   }
 
-  // Small deterministic resource gradient for resource-coupling experiments.
-  for (let z = 0; z < size.z; z += 1) {
-    for (let y = 0; y < size.y; y += 1) {
-      for (let x = 0; x < size.x; x += 1) {
-        const i = index3D(x, y, z, size);
-        state.resource[i] = 0.4 + 0.6 * (x / Math.max(1, size.x - 1));
+  if (resourceProfile === 'gradient-x') {
+    for (let z = 0; z < size.z; z += 1) {
+      for (let y = 0; y < size.y; y += 1) {
+        for (let x = 0; x < size.x; x += 1) {
+          const i = index3D(x, y, z, size);
+          state.resource[i] = 0.4 + 0.6 * (x / Math.max(1, size.x - 1));
+        }
       }
     }
   }

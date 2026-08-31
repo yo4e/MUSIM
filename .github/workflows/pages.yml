@@ -1,3 +1,4 @@
+# Preview deployments are enabled on the v0 feature branch until PR #4 is merged.
 name: Deploy MUSIM v0 to GitHub Pages
 
 on:

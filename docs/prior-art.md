@@ -1,147 +1,257 @@
 # Prior-art map
 
-This document is the starting map for MUSIM research. It is intentionally broader than a bibliography: the goal is to identify which existing ideas are technically and conceptually closest to a browser-based 3D artificial-life world built from continuous dynamics.
+この文書は、MUSIM の最初の実験基盤を選ぶための先行研究調査である。問いは「3D で生命らしい見栄えを出せるか」ではなく、**あらかじめ `Creature` を定義しない連続的・局所的ダイナミクスから、個体性、内部状態、行動、そして将来的には代謝と再生産の前提が生まれ得るか**である。したがって、既存研究が実演した事実と、MUSIM の設計判断としての推論を明確に区別する。
 
-## 1. Continuous cellular automata
+> **表記方針。** 「文献で示された」と記す箇所は、出典が直接報告している範囲に限定する。「MUSIM への含意」は、それらを踏まえた本プロジェクトの設計上の推論であり、実証済みの結論ではない。文献が未解決の点は、推測で補わず明示する。
 
-### Lenia
+## 1. 結論の要約
 
-Bert Wang-Chak Chan's Lenia generalizes cellular automata toward continuous states, time, and space and produces persistent, mobile, life-like localized patterns.
+**v0 には、Flow-Lenia の考え方を採る「質量保存・複数チャネルの連続場」を、小さな真の 3D ボクセル場として実装することを推奨する。** これは Flow-Lenia の公開実験をそのまま 3D へ移植したと主張するものではない。Flow-Lenia が提供する質量保存と局在化された性質という概念を、MUSIM の目的に合わせて小さな 3D 格子へ適用するという推論である。[3] [4]
 
-- Paper / project family: **Lenia — Biology of Artificial Life**
-- Why it matters to MUSIM: establishes that simple continuous local dynamics can produce patterns that observers naturally treat as organisms.
-- Research question: which Lenia properties are essential, and which are artifacts of a particular update rule?
+この選択は、物質、局在する境界、内部シグナル、資源の勾配をすべて同じ場の状態として扱えるため、MUSIM の「身体と内部状態を事前定義しない」という概念目標に最も整合する。Particle Lenia は 3D 化と厳密な粒子数保存において最も直接的な実演例を持つ一方、v0 の中心問いを、連続場の内部構造ではなく離散粒子群の相互作用へ寄せる。標準 Lenia は局在移動パターンの発見に強いが、保存則を持たない。反応拡散・人工化学・ハイブリッドは将来の候補として重要だが、v0 時点で追加すべき設計自由度が多い。[1] [3] [5] [7]
 
-### Lenia and Expanded Universe (2020)
-
-Bert Wang-Chak Chan generalized Lenia into higher dimensions, multiple kernels, and multiple channels. Reported phenomena include polyhedral symmetries, individuality, self-replication, emission, growth by ingestion, and “virtual eukaryotes” with internal differentiation.
-
-- MIT Press: https://direct.mit.edu/isal/article/doi/10.1162/isal_a_00297/98400/Lenia-and-Expanded-Universe
-- DOI: https://doi.org/10.1162/isal_a_00297
-- Why it matters: directly demonstrates that the Lenia family can be extended beyond 2D and can support richer internal organization.
-- MUSIM angle: inspect the 3D formulation before deciding whether to use voxels, particles, or a hybrid substrate.
-
-### Flow-Lenia
-
-Flow-Lenia adds mass conservation and localizes rule parameters inside the simulated world, enabling different emerging forms to coexist under locally coherent dynamics.
-
-- Google Research / ALIFE 2023: https://research.google/pubs/flow-lenia-towards-open-ended-evolution-in-cellular-automata-through-mass-conservation-and-parameter-localization/
-- Artificial Life journal version: https://direct.mit.edu/artl/article/31/2/228/130572/Flow-Lenia-Emergent-Evolutionary-Dynamics-in-Mass
-- Why it matters: conservation laws and localized parameters are extremely close to MUSIM's desire to make “properties of the organism” part of the world rather than metadata attached to a `Creature` object.
-- MUSIM angle: study whether metabolism-like dynamics can be expressed as redistribution and transformation of conserved quantities.
-
-## 2. Particle-based continuous artificial life
-
-### Particle Lenia
-
-Alexander Mordvintsev, Eyvind Niklasson, and Ettore Randazzo reformulated Lenia-inspired dynamics as interacting particles in continuous space. The authors explicitly note that particle systems scale naturally from 2D to 3D.
-
-- Project / explanation: https://google-research.github.io/self-organising-systems/particle-lenia/
-- Why it matters: may be substantially easier than a dense 3D voxel field while preserving local continuous dynamics and mass conservation.
-- MUSIM angle: compare computational cost, visual quality, emergence, and extensibility of particle vs. field substrates.
-
-### Swarm Chemistry
-
-Hiroki Sayama proposed an artificial chemistry in which reactions are not predefined symbolic reaction rules but emerge from kinetic interactions between populations with different movement characteristics.
-
-- PubMed: https://pubmed.ncbi.nlm.nih.gov/18855565/
-- DOI: https://doi.org/10.1162/artl.2009.15.1.15107
-- Why it matters: strong precedent for treating “chemistry” as emergent spatiotemporal behavior rather than a list of explicit reactions.
-- MUSIM angle: useful reference if multiple material or behavioral species are introduced.
-
-## 3. Embodied virtual creatures and evolution
-
-### Karl Sims — Evolving Virtual Creatures (1994)
-
-Karl Sims evolved both morphology and neural control in simulated 3D physical worlds. Creatures developed locomotion, swimming, jumping, and light-following behavior under genetic selection.
-
-- ACM: https://doi.org/10.1145/192161.192167
-- Author page / video: https://www.karlsims.com/evolved-virtual-creatures.html
-- Why it matters: foundational precedent for allowing morphology and control to co-evolve in a virtual 3D environment instead of hand-designing agents.
-- Difference from MUSIM: Sims still evolves explicit creature bodies and controllers; MUSIM is interested in whether the creature boundary itself can emerge from the substrate.
-
-## 4. Self-organizing systems adjacent to MUSIM
-
-Google Research's Self Organising Systems collection includes work on neural cellular automata, reaction-diffusion, Particle Lenia, differentiable chemical reaction networks, and related models.
-
-- Index: https://google-research.github.io/self-organising-systems/
-- Why it matters: useful survey hub for modern differentiable and self-organizing approaches.
-
-Topics to inspect next:
-
-- neural cellular automata
-- reaction-diffusion systems
-- artificial chemistry
-- continuous-time recurrent neural networks (CTRNN)
-- sensorimotor Lenia
-- morphological computation / embodied intelligence
-- physical reservoir computing
-- autopoiesis models
-- protocell / wet artificial-life literature
-- open-ended evolution metrics
-
-## 5. Browser / 3D implementation feasibility
-
-### Three.js + WebGPU
-
-Three.js currently exposes GPU compute facilities through `WebGPURenderer`, including 3D storage textures.
-
-- `Storage3DTexture`: https://threejs.org/docs/pages/Storage3DTexture.html
-- official 3D compute-texture example: https://threejs.org/examples/webgpu_compute_texture_3d.html
-- Why it matters: a dense 3D continuous field can plausibly remain on the GPU for simulation and visualization rather than being copied through JavaScript each step.
-
-Possible rendering approaches:
-
-- volume rendering
-- point / particle rendering
-- thresholded density visualization
-- marching cubes / isosurfaces
-- multiple overlaid scalar fields
-
-## Key distinctions MUSIM should preserve
-
-During research, avoid collapsing several different ideas into “3D artificial life.” MUSIM is specifically interested in the following distinctions:
-
-### Predefined agent vs. emergent individual
-
-Does the simulation create a `Creature` first, or do we identify a persistent structure after it appears?
-
-### Symbolic internal state vs. physicalized internal state
-
-Is “hunger” stored as a named variable, or does resource depletion alter continuous internal dynamics such that food-seeking behavior emerges?
-
-### Geometry plus controller vs. substrate-level organization
-
-Is a body mesh controlled by a brain, or are body, boundary, signaling, and behavior all patterns of the same underlying substrate?
-
-### Visual novelty vs. biological organization
-
-A beautiful moving blob is not automatically interesting artificial life. We should look for measurable properties such as persistence, homeostasis, resource use, regeneration, reproduction, heredity, variation, adaptation, and evolutionary activity.
-
-## Initial research questions
-
-1. What is the smallest known continuous artificial-life model that produces robust localized mobile structures in 3D?
-2. Is a dense 3D field practical in-browser, or should MUSIM begin with particles?
-3. Which conservation laws are necessary to prevent trivial explosion or extinction?
-4. How have prior systems represented resources, metabolism, or homeostasis without explicit agent-level variables?
-5. How can an emergent individual be detected automatically when no creature ID exists?
-6. Which systems support multiple persistent forms in the same world under the same laws?
-7. What mechanisms have produced reproduction plus heritable variation rather than mere pattern copying?
-8. What metrics are used to distinguish open-ended evolution from transient novelty?
-9. Which parts of a system should remain deterministic, and where might noise improve exploration or individuality?
-10. What visualization methods make a genuinely 3D internal structure observable without turning the project into a rendering problem first?
-
-## Near-term output of the survey
-
-Before implementation, produce a short comparison of candidate substrates:
-
-| Candidate | 3D feasibility | Conservation | Emergent boundary | Evolution potential | Browser/GPU fit | Complexity |
+| 候補 | 3D 実現性 | 保存・資源制約 | 境界・内部状態 | 同一世界での多形共存 | ブラウザ GPU 適合 | v0 の判断 |
 | --- | --- | --- | --- | --- | --- | --- |
-| Lenia / 3D Lenia | TBD | TBD | TBD | TBD | TBD | TBD |
-| Flow-Lenia | TBD | TBD | TBD | TBD | TBD | TBD |
-| Particle Lenia | TBD | TBD | TBD | TBD | TBD | TBD |
-| Reaction-diffusion | TBD | TBD | TBD | TBD | TBD | TBD |
-| Artificial chemistry | TBD | TBD | TBD | TBD | TBD | TBD |
-| Hybrid field + particles | TBD | TBD | TBD | TBD | TBD | TBD |
+| Lenia / 3D Lenia | 高次元化は報告済み。ただし本調査で確認した資料は 3D の頑健性・性能を系統評価していない。[1] [2] | 標準形には質量保存がない。爆発・消滅を別に制御する必要がある。[5] | 多チャネル化で内部差別化は可能。境界は場の局在から観測する。[2] | 同一則に支えられる形に限られやすい。[3] | 密な格子演算は適合するが、3D 畳み込みの負荷が高い。 | 不採用。保存則が v0 の主題に不足。 |
+| Flow-Lenia 型保存場 | 3D そのものの公開実証は本調査で未確認。局所演算なので技術的には自然な拡張候補。[3] [4] | **質量保存が中心的特長**。資源の流入・散逸を明示的に設計できる。[3] | 場に局在するパラメータを持たせられるため、身体・性質・内部状態を同一基質に置ける。[3] | 局在パラメータにより多種世界を志向する。[3] | 小さな 3D ストレージテクスチャへ ping-pong 更新する設計に適合する。[19] [20] | **採用。** 概念目標と保存則の両方を最小限で検証できる。 |
+| Particle Lenia | 公式資料は 256 粒子から形成される 3D の移動構造を提示する。[5] | 粒子数一定なら全質量は厳密に保存される。[5] | 形は粒子配置から生じるが、連続的な内部化学場は別途必要。 | 粒子ごとに性質を担わせれば異質性を表現できる。[5] | 粒子描画は容易。ただし近傍探索または全対相互作用がスケール上の主リスク。 | 不採用。最有力の代替・比較対照として保持。 |
+| 反応拡散 | 3D PDE としては標準的だが、局在移動個体の一般的・頑健な生成は自明でない。[7] | 化学種ごとの生成・分解・境界流束をモデル化可能。保存は反応ネットワーク次第。 | 活性化／抑制の場は自然に表せるが、持続する個体境界は追加条件を要する。[7] | 複数種の反応系で可能だが、反応設計に依存する。 | 格子上の局所演算で適合する。 | 不採用。v0 ではパラメータ探索空間が広すぎる。 |
+| 人工化学 | 空間化・連続化は可能だが、表現は幅広く一様ではない。[8] | 物質変換・触媒・供給・廃棄を表せる。 | 膜、代謝、情報の結合を表現できる反面、多くの意味論を先に設計しがちである。[8] [15] | 化学種・反応網として可能。 | 表現により大きく異なる。 | 不採用。将来の代謝段階向け。 |
+| ハイブリッド場 + 粒子 | 高い。各表現の利点を組み合わせられる。 | 粒子の厳密保存と場の拡散・反応を組み合わせられる。 | 内部場と物質粒子を分けて表せる。 | 高い。 | 二系統の同期、検証、観測が必要。 | 不採用。原因切り分けが難しく、v0 には早すぎる。 |
 
-The first engineering decision should follow this comparison rather than precede it.
+## 2. 近接する先行研究
+
+### 2.1 Lenia：連続局所則からの局在・移動パターン
+
+Chan の Lenia は、空間、時間、状態を連続化したセル・オートマトンであり、一般化された局所則により、局在した自律パターンを示す。原著は 2D の計算実験で 18 科・400 超の lifeform を整理し、幾何学的、回復的、適応的に見えるパターンを報告している。[1] このことは、連続場の局所更新が、観察者に個体として読めるパターンを生み得ることの有力な出発点である。
+
+ただし標準 Lenia は「生命らしく見える形」を証明するものではない。原著が報告する多様性や適応性は、特定のパラメータと探索過程の下での観察であり、物質保存、資源摂取、代謝閉包、または遺伝可能な再生産を一般に保証しない。[1] さらに、標準 Lenia では、異なる形がそれぞれ異なる更新則に依存する場合、同一の世界で自然に相互作用させにくいという問題が後続研究で指摘されている。[3]
+
+**高次元・多チャネル化。** Chan は Lenia を高次元、複数カーネル、複数チャネルへ一般化し、自己複製、放出、取り込みによる成長、内部の役割分化を含む現象を報告した。[2] これは「単一の濃度だけ」より豊かな内部構造が連続 CA に入り得ることを示す重要な先例である。一方、これらは探索により得られた実験結果であり、特定の 3D 形があらゆる摂動に頑健であることや、ブラウザで有用な速度が出ることは、当該資料だけからは結論できない。
+
+| 観点 | 文献から支持されること | MUSIM への含意 | 残る不確実性 |
+| --- | --- | --- | --- |
+| 局在構造 | 連続局所則が多様な局在・移動パターンを生成し得る。[1] | 「まず個体を置く」のではなく、場から生じた凝集を観測対象にできる。 | 3D での発見可能性、長時間の頑健性、複数個体の安定相互作用。 |
+| 内部状態 | 多チャネル・多カーネル拡張で分化と複雑な形が報告された。[2] | 可視密度とは別に、内部の資源・触媒・性質チャネルを置く余地がある。 | どの最小チャネル数で「内部」と呼べる組織が現れるか。 |
+| 再生産 | self-replication が報告された。[2] | 形のコピーを再生産候補として検出する出発点になる。 | 変異、遺伝、親子系譜、選択までを伴うかは別検証である。 |
+
+- 論文：Chan, **Lenia — Biology of Artificial Life**、*Complex Systems* 28(3), 2019、DOI: [`10.25088/ComplexSystems.28.3.251`](https://doi.org/10.25088/ComplexSystems.28.3.251)。[1]
+- 高次元拡張：Chan, **Lenia and Expanded Universe**、ALIFE 2020、DOI: [`10.1162/isal_a_00297`](https://doi.org/10.1162/isal_a_00297)。[2]
+- 著者プロジェクト・実装：<https://chakazul.github.io/lenia.html>、<https://github.com/Chakazul/Lenia>。[21]
+
+### 2.2 Flow-Lenia：保存と局在化された性質
+
+Flow-Lenia は、Lenia に質量保存を導入し、更新則のパラメータ自体をダイナミクスに埋め込んで局在化できるようにした拡張である。著者らは、空間的に局在した複雑なパターン、局在して混ざり合う性質を持つ複数種世界、および進化的活動の枠組みによる分析を報告している。[3] [4] ここで重要なのは、物体を `Creature` として外部から持たせず、**形を支える局所的な性質そのものを世界状態にする**という設計である。
+
+標準 Lenia の非保存性は、無限成長または消滅へ向かう振る舞いと関係する主要な問題として、Particle Lenia の公式解説でも明示されている。[5] 質量保存だけで生命性が生まれるわけではないが、総物質量を固定し、局所的な集中、流出、交換を評価可能にする。これは「飢え」を個体変数として与える代わりに、局所的に利用可能な物質やエネルギーの不足を場の状態として扱うための必要条件に近い。
+
+> **MUSIM への含意。** v0 の保存量は、生命の完全な代謝モデルではなく、まず「局在構造が有限の共有物質の下で、維持・移動・散逸のどれを示すか」を調べるための制約として導入する。資源場と本体を別オブジェクトに分けず、相互変換可能なチャネルとして扱う。
+
+ただし、Flow-Lenia が完成した代謝や開放端進化を実証したと解釈してはならない。2025 年版は進化的活動を含む指標でダイナミクスを分析しているが、研究分野全体で OEE の定義と測定には複数の立場がある。[4] [16] 本調査で確認した資料は、Flow-Lenia 型の真の 3D 実装の性能・頑健性を直接には示していない。したがって、3D は v0 自身で検証すべき仮説である。
+
+- 論文：Plantec et al., **Flow-Lenia: Towards open-ended evolution in cellular automata through mass conservation and parameter localization**、ALIFE 2023、DOI: [`10.1162/isal_a_00651`](https://doi.org/10.1162/isal_a_00651)。[3]
+- 査読版：Plantec et al., **Flow-Lenia: Emergent Evolutionary Dynamics in Mass Conservative Continuous Cellular Automata**、*Artificial Life* 31(2), 2025、DOI: [`10.1162/artl_a_00471`](https://doi.org/10.1162/artl_a_00471)。[4]
+- 公開ノートブック：<https://colab.research.google.com/drive/14nw3aK5aOMH_brKYdRsXHKt0OgK1RteK>。[3]
+
+### 2.3 Particle Lenia：3D への最も直接的な粒子基盤
+
+Particle Lenia は、Lenia 的な相互作用を連続空間中の粒子集団の常微分方程式として表す。公式資料では、一定の粒子数から質量保存が従い、粒子ごとのパラメータにより異質な性質を持たせられ、2D から 3D への移行が容易であると説明されている。[5] 同資料は、256 粒子が集まり、最終的にゆっくり漂うキノコ状の 3D glider となる例を示す。[5]
+
+この実演は、本調査で確認できた範囲では「局在し移動する 3D 連続人工生命らしい構造」の最も小さい明示的な実例である。ただし、これを「最小かつ頑健な 3D モデルが確定した」と読むことはできない。粒子数は一例であり、同じ資料は一部パターンの微小摂動に対する感度と、粒子数を変えたときの再現が保証されないことにも触れている。[5] Horibe らの摂動応答分析は Particle Lenia に時間的不安定性と複数の安定状態を持つ配置を見出し、適応的・オートポイエーシス的モデルとしての可能性を示唆するが、自己維持する認知主体の実証とまでは結論していない。[6]
+
+Particle Lenia を v0 に選ばない理由は性能ではない。粒子表現は 3D 描画と正確な保存に有利である一方、MUSIM が最初に観たい「局在構造内部の拡散、資源勾配、局所的な物性変化」を、粒子属性や補助場として後から付け足す設計へ向かいやすい。密な場であれば、境界・内部・環境の区別を初めから同一の連続状態で観測できる。
+
+- プロジェクト・説明：<https://google-research.github.io/self-organising-systems/particle-lenia/>。[5]
+- 再現用ノートブック：<https://colab.research.google.com/github/google-research/self-organising-systems/blob/master/notebooks/particle_lenia.ipynb>。[5]
+- 追加評価：Horibe et al., **Exploring the Adaptive Behaviors of Particle Lenia**、ALIFE 2023、DOI: [`10.1162/isal_a_00631`](https://doi.org/10.1162/isal_a_00631)。[6]
+
+### 2.4 反応拡散と人工化学：代謝への隣接経路
+
+反応拡散系は、局所反応と拡散輸送の結合からパターンを生む連続場の古典的な基盤である。Hecht、Kessler、Levine は、励起性の反応拡散系において時空間的に局在したパッチが生じ得ることを示したが、扱われる構造は有限寿命であり、局在解の安定性と生成のしやすさはパラメータに依存する。[7] この結果は、局在パターン自体は反応拡散で可能であることを支持するが、持続的な個体、再生産、または 3D での自発的移動を一般に保証しない。
+
+人工化学は、自己組織化、分子シミュレーション、起源進化を扱うための広い枠組みであり、Dittrich、Ziegler、Banzhaf のレビューは、モデリング、情報処理、最適化という応用面を整理している。[8] MUSIM にとっては、物質変換、触媒、廃棄物、有限な資源循環を導入する際の重要な参照系である。しかし、人工化学は表現の幅が広く、反応規則や分子種の意味を先に与える設計にもなりやすい。v0 でそれを採ると、「現れた個体を問う」のではなく「設計した反応網が何をするか」を問う実験になりやすい。
+
+Swarm Chemistry は、人工の群れ集団を反応物とみなし、典型的な人工化学のような事前定義済み反応規則ではなく、複数種の運動学的相互作用から時空間パターンが生じることを提案した。[9] 種の分離、移動の生成・制限、複雑な形の探索を報告しており、多種相互作用の参照として有用である。一方で粒子群の種類や運動パラメータは明示的であり、個体境界そのものを無前提に発見する MUSIM の第一実験とは異なる。[9]
+
+| 参照系 | MUSIM への価値 | v0 で採らない理由 | 後続段階での使い所 |
+| --- | --- | --- | --- |
+| 反応拡散 | 拡散・活性化・抑制・局在化を同じ場で扱える。[7] | 頑健な持続個体を得るための条件が、v0 では追加探索になる。 | 保存場に、限定的な触媒／抑制チャネルを導入する段階。 |
+| 人工化学 | 資源変換、触媒、代謝閉包、進化の語彙を与える。[8] | 分子種・反応則の意味を先に決める危険がある。 | 物質保存場で自己維持が見えた後の代謝拡張。 |
+| Swarm Chemistry | 異種間の運動学的相互作用と創発的パターンの先例。[9] | エージェント種と挙動則が明示される。 | 多形・多種の相互作用を評価する比較ベースライン。 |
+
+### 2.5 明示的な生物モデルとの対照：Karl Sims、CTRNN、形態計算
+
+Sims の 1994 年の仮想生物は、3D 物理世界で形態とニューラル制御を進化させ、遊泳、歩行、跳躍、光追跡などの行動を示した。[10] これは形態と制御の共進化、タスクに対する選択、行動の進化を示す古典的かつ重要な実例である。しかし、身体、遺伝子、ニューラルコントローラ、適応度が明示的に与えられる。そのため MUSIM の主題である「境界と個体性が基質から生じるか」を直接検証するモデルではなく、**後で MUSIM が何を超えたかを比較するための対照**である。[10]
+
+CTRNN は連続時間で変化する再帰ニューラルネットワークとして、適応行動を担う小規模動的コントローラの解析を可能にした。[11] また形態計算の研究は、身体、脳、環境を切り離さず、身体の物理過程が行動と情報処理に寄与することを強調する。[12] これらは「知能は名前付きの脳変数だけにある必要はない」という MUSIM の問題意識を支える。ただし、CTRNN や多くの身体化エージェント研究では、身体とコントローラの境界があらかじめ定義されるため、v0 の基質には採らない。
+
+### 2.6 Neural CA と Sensorimotor Lenia：探索・回復性・行動
+
+Growing Neural Cellular Automata は、局所的なニューラル更新則を学習し、単一セルから目標パターンを成長させ、持続させ、損傷後に再生する方法を示した。[13] 継続・再生の訓練により、目標パターンをアトラクタへ近づけるという観点は、MUSIM の「頑健な自己維持」を測る上で参考になる。しかし、この系では目標形状、損失、可視チャネル、alive 判定閾値が設計に入る。従って、その境界は創発的に検出されたものではなく、少なくとも一部は学習・評価系により指定される。[13]
+
+Hamon らの Sensorimotor Lenia は、局所則のみで構成される連続 CA 内で、障害物や他個体に対処しつつ自己の構造を保ち、損傷や更新頻度・スケールの変化にも一定の一般化を示す構造を、勾配法、カリキュラム、探索により発見した。[14] これは MUSIM に最も近い「局所基質内の境界・自己維持・行動」の先例の一つである。もっとも、見つけるべき機能と環境は探索手続きにより整形されており、資源を消費する代謝が自発的に生じたことを示すものではない。[14]
+
+**MUSIM への含意。** v0 は学習器を入れず、まず固定則の下で保存・維持・移動を観測する。発見空間があまりに狭いことが分かった段階で、Sensorimotor Lenia のような探索支援を導入する。そうしなければ「探索器が期待に合わせた形を選んだ」のか「世界則が個体性を可能にした」のかを区別しにくい。
+
+### 2.7 オートポイエーシス、プロトセル、個体性
+
+Varela、Maturana、Uribe は、構成要素を継続的に産出・再産出する組織としてオートポイエーシスを定式化した。[22] Solé らのプロトセル研究のレビューは、細胞らしい系には容器、代謝、情報の結合が必要であり、自己維持、複製、進化可能性は異なる到達段階であると整理している。[15] これは v0 に重要な節度を与える。単に凝集が長く残ることは、自己維持や再生産の証拠ではない。逆に、最初の検証目標を自己維持へ限定することには、十分な研究上の根拠がある。
+
+個体境界を、既知の膜や ID から仮定してはならない。Krakauer らは、個体を「過去から未来へ情報を伝播し、時間的完全性を保つ凝集」と捉え、個体性が連続的・入れ子・境界非依存であり得ることを示す情報理論的枠組みを提案した。[17] これは、MUSIM の個体検出を二段階に分けることを示唆する。シミュレーション内に個体 ID は置かず、**観測側**が密度閾値・連結成分・時間追跡から候補を抽出し、後に時間的予測可能性や情報結合で候補の妥当性を比較する。
+
+| 段階 | v0 で測るもの | 「生命らしい」と言うには不足するもの |
+| --- | --- | --- |
+| 局在 | 背景から分離できる高密度・低密度の凝集が一定時間続く。 | 単なる静的アトラクタや視覚的な模様との区別。 |
+| 自己維持候補 | 摂動後、凝集の量・形・内部比率が対照より回復する。 | 資源を自ら変換して維持する代謝閉包。 |
+| 行動候補 | 外部の資源勾配や障害に対して、単なる受動輸送以上の再現性ある偏りがある。 | 目的・飢え・認知を直ちに帰属すること。 |
+| 再生産候補 | 分裂後の二つの凝集が親の空間・内部特徴を保持する。 | 遺伝可能な変異、親子系譜、選択、進化。 |
+
+### 2.8 開放端進化と評価
+
+開放端進化（OEE）は、持続的な新奇性、複雑性、適応的成功など複数の側面を含むが、単一の合意された定義や測定はない。[16] Taylor らは、観測可能な振る舞い上の特徴と、それを説明する仮説的機構を区別すべきだと結論づけている。[16] ISAL の解説は、ノイズを除く方法として shadow run や系譜の持続性フィルタを整理し、測定群として進化的活動統計と MODES を挙げている。[18]
+
+v0 には系譜も再生産もないため、OEE 指標を主成功条件にしてはならない。v0 で実用的なのは、長期持続、摂動後の回復、資源との相関、個体候補の数と寿命の分布、個体候補の時間的一貫性である。再生産と継承が観測できた後に初めて、系譜記録と持続性フィルタを含む進化的活動の評価へ進む。
+
+## 3. Issue の研究質問への回答
+
+| 質問 | 調査に基づく回答 | 根拠と解釈 | 未解決事項 |
+| --- | --- | --- | --- |
+| 最小で頑健に局在移動構造を生む 3D モデルは何か。 | 普遍的な最小モデルは特定できない。本調査で確認した**直接的な 3D 移動構造の明示例**は Particle Lenia の 256 粒子例である。[5] | Lenia 拡張は高次元化を示し、Particle Lenia は具体的な 3D glider を示す。[2] [5] | 最小粒子数・最小格子・摂動頑健性・探索成功率を同じ評価条件で比較した研究は未確認。 |
+| v0 は密な 3D 場、粒子、ハイブリッドのどれにすべきか。 | **保存された複数チャネルの密な 3D 場**にする。 | Flow-Lenia の保存と局在化された性質は、境界・内部・資源を同じ連続基質で問う MUSIM の目的に合う。[3] | 3D Flow-Lenia 型の十分な性能とパターン発見性は v0 自身で実測する。 |
+| 爆発・絶滅を避けるには何が必要か。 | 全物質量の保存を基礎に、資源供給・回収・散逸を局所チャネルとして明示する。 | 標準 Lenia の非保存性は爆発的成長／消滅と関連し、Flow-Lenia と Particle Lenia は保存を中心に置く。[3] [5] | 保存だけでは停止した死んだ凝集も防げない。非平衡駆動と安定性の最小設計は未確定。 |
+| 明示的な hunger なしに資源探索は起こり得るか。 | 起こり得る設計仮説だが、今回の資料だけで実証済みとは言えない。 | 資源場が維持率・移動率・局在化に局所的に結合すれば、状態変数名なしに勾配応答を観測できる。これは保存場と形態計算からの推論である。[3] [12] | 反応が受動的ドリフトではなく自己維持に寄与する行動かを判定する対照実験。 |
+| ID なしで境界・個体をどう検出するか。 | 観測側で、閾値化、3D 連結成分、重なり追跡、内部チャネル比、時間的一貫性を併用する。 | 個体性を時間的情報伝播として扱う枠組みは、固定境界を仮定しない検出を支持する。[17] | どの閾値・粗視化が恣意的でないか。情報理論指標の計算コスト。 |
+| 同じ世界則で複数の形は可能か。 | 可能性はある。Flow-Lenia は局在パラメータによる多種世界を、Particle Lenia は粒子ごとの性質を提案する。[3] [5] | 「一つの全球則」に見せながら局在した性質が存在することは、MUSIM の多形性に近い。 | 局在パラメータを継承可能にし、混合・衝突・選択まで示せるか。 |
+| 再生産と遺伝可能な変異を支える機構は何か。 | 少なくとも、持続する個体候補、分裂／複製、保存された物質の再配分、性質の局所的コピー、変異、差次的持続が必要である。 | Lenia 拡張の自己複製報告は出発点であり、プロトセル研究は容器・代謝・情報の結合を重視する。[2] [15] | これらを同時に満たす MUSIM の最小則は未知。v0 の対象外。 |
+| 見栄えと意味ある ALife 行動をどう区別するか。 | 長寿命だけでなく、摂動回復、資源依存、対照との差、再現性、内部組織、系譜を段階別に測る。 | OEE は複数の指標とノイズ除去を必要とし、見た目の新奇性だけでは不十分である。[16] [18] | 閾値と統計的基準を v0 の実測後に事前登録する必要がある。 |
+| 持続・恒常性・適応・進化活動に実用的な指標は何か。 | v0 は生存曲線、質量保持、重心・形状・内部比率の回復、資源勾配との相関、個体候補の時系列予測可能性を測る。再生産後は系譜持続性と進化的活動を追加する。 | 個体性の時間的完全性と、OEE の持続性フィルタがそれぞれの観測設計を支える。[17] [18] | 情報理論的指標の推定精度、複数尺度での個体候補の競合。 |
+| 内部構造を見る最小の 3D 可視化は何か。 | まず**直交スライス面、最大値投影、閾値付き低解像度ボリューム**を組み合わせる。 | GPU テクスチャは計算・描画用リソースとして利用でき、Three.js は 3D ストレージテクスチャと 3D compute 例を提供する。[19] [20] | フル解像度レイマーチングやアイソサーフェスは観測価値を実測してから追加する。 |
+
+## 4. v0 の観測・評価設計
+
+### 4.1 シミュレーション内に個体を置かず、観測で候補を作る
+
+v0 の世界状態は、たとえば保存される物質、資源／自由エネルギー、局所的な性質または触媒性を表す少数のスカラー場だけで構成する。`Creature`、個体 ID、空腹度、明示的な目標座標は世界状態に含めない。個体候補はシミュレーションの出力を解析する観測器が初めて定義する。
+
+1. 可視または物質チャネルを複数の閾値で二値化し、3D 連結成分を抽出する。
+2. 時刻間の重なり、重心距離、質量差、内部チャネルの類似度で成分を追跡する。
+3. 寿命、質量変動、表面積、重心運動、内部チャネル比、近傍資源との関係を記録する。
+4. 摂動の前後で、同一追跡候補または後継候補が、対照よりどの程度状態を回復するかを測る。
+
+この手続きは観測上の便宜であり、閾値を「真の境界」と宣言するものではない。Krakauer らの枠組みに沿って、異なる閾値・粗視化で安定して現れる候補ほど、より強い個体性候補として扱う。[17]
+
+### 4.2 v0 で測る指標
+
+| 性質 | 最小指標 | 最低限の対照 | 成功と読まない例 |
+| --- | --- | --- | --- |
+| 持続 | 個体候補の寿命分布、質量保持率、移動距離。 | 同質量・同体積のランダム初期条件。 | 単に固定点へ凍結した密度塊。 |
+| 恒常性候補 | 局所除去・ノイズ・資源遮断後の、質量、形状、内部比率の回復時間と誤差。 | 摂動なし、および同じ量を持つ非局在的初期条件。 | 元の見た目に近づいただけで、内部状態が崩壊している場合。 |
+| 資源結合 | 個体候補周囲の資源勾配と速度・維持率・質量流の関係。 | 勾配の向きを反転、資源チャネルとの結合を無効化。 | 一回限りの受動的な流され方。 |
+| 境界の自律性候補 | 凝集内の情報・状態の時間的一貫性を、同サイズの背景領域と比較する。 | 空間シャッフル、時間シャッフル、閾値変更。 | 解析閾値だけで出現・消滅する成分。 |
+| 再生産候補 | 分裂後に二つの追跡候補が長期持続し、親と内部特徴を共有する頻度。 | 単発の破断・ランダムな分裂。 | 親子同定も継続性もない単なる断片化。 |
+
+## 5. Browser / GPU 実装方針
+
+WebGPU は GPU 上のレンダリングと計算を公開する API であり、GPU テクスチャと compute pipeline を利用できる。[19] Three.js の `WebGPURenderer` と `Storage3DTexture`、および公式の 3D compute texture 例は、密な 3D 状態を GPU に留めたまま更新・描画するための実装経路を示す。[20] ただし WebGPU の使用可能性、テクスチャ上限、浮動小数点精度、性能はブラウザ、GPU、ドライバにより異なる。従って v0 は機能検出と段階的な解像度低下を必須とし、CPU へ状態全体を毎フレーム読み戻さない。
+
+| 要素 | v0 の方針 | 理由 | 後回しにするもの |
+| --- | --- | --- | --- |
+| 状態表現 | 2～3 個のスカラー場を ping-pong する小さな 3D ボリューム。 | 物質、資源、局所性を同じ空間上で観測できる。 | 大規模多チャネル、局在パラメータの進化。 |
+| 解像度 | 初期基準は `64³`。`96³` は性能計測後、`128³` は追加検証後に限る。 | float16 の 3 スカラーを二重バッファした生の状態量は、それぞれ約 3 MiB、10.125 MiB、24 MiB。実テクスチャ形式、可視化、作業領域により消費量は増える。 | 解像度を先に上げて、規則の発見可能性を曖昧にすること。 |
+| 更新 | 固定刻みの compute pass で、局所近傍から次状態を計算する。 | 観測時系列と再現性を確保し、フレームレートに意味論を持たせない。 | 可変刻み・物理エンジン統合。 |
+| 可視化 | 直交スライス、最大値投影、低解像度の閾値ボリュームを基本にする。 | 内部の空洞・層・チャネル比が見え、レイマーチングやメッシュ抽出より安価。 | 高品質ボリュームレンダリング、marching cubes、映画的な照明。 |
+| 観測 | GPU 側で統計用テクスチャを更新し、低頻度の読出しでログ化する。 | 毎ステップの全ボリューム読出しを避ける。 | リアルタイムでの完全な個体性情報推定。 |
+| 互換性 | WebGPU 非対応なら実験を開始せず、能力と推奨解像度を表示する。 | 連続 3D 場の v0 を CPU fallback で同等に再現することは目的外。 | WebGL 用に別の世界則へ妥協すること。 |
+
+## 6. Recommended substrate for v0
+
+### 推奨する基質
+
+**小規模な真の 3D ボクセル格子上で更新する、Flow-Lenia 型の質量保存・複数チャネル連続場。** 最小構成は、保存される物質チャネル `M`、外部から補給・回収され得る資源／自由エネルギー候補 `R`、および局所的な状態または触媒性を表す `C` の 3 チャネルとする。`C` は初期 v0 では必須ではないが、`M` と `R` だけで局在維持が見えない場合に追加する。
+
+更新則は、局所畳み込みまたは近傍和、非線形応答、チャネル間変換、保存制約から成る。総 `M` を厳密に保存するか、世界全体の供給・回収を明示的に帳簿化する。`R` は均一に湧く「餌」ではなく、局所的な利用可能性と交換を表す連続量として扱う。これにより、後から「空腹度」や「目標」を付けずに、局在構造が資源分布に対してどのように維持・移動・変形するかを問える。
+
+### MUSIM の概念目標に最も合う理由
+
+第一に、身体らしい局在、内部シグナル、資源、環境を**同じ世界状態**に置ける。これは、ボディ、コントローラ、資源、個体 ID を別オブジェクトとして先に定義する構成を避ける。Flow-Lenia の質量保存と局所的に埋め込まれた性質は、この方向に最も近い先行例である。[3] [4]
+
+第二に、保存則が有限の物質をめぐる競合と交換を作り、非保存系で起こりやすい無制限成長を安易な「生命らしさ」と誤認する危険を下げる。[5] これは代謝そのものではないが、代謝の前段階である、物質の収支と自己維持を測れる条件を作る。
+
+第三に、密な場は内部構造を自然に持てる。粒子のみの系では、内部の資源や触媒性を粒子属性または別場として追加する必要があるが、複数チャネル場では、内部と外部の勾配、空洞、層、輸送を同じ基質で直接観測できる。これは多チャネル Lenia、Sensorimotor Lenia、プロトセル研究が問題にする、局所組織と自己維持を段階的に追う設計と整合する。[2] [14] [15]
+
+### 主な代替案を v0 に選ばない理由
+
+| 代替案 | 採らない理由 | 再検討の条件 |
+| --- | --- | --- |
+| 標準 3D Lenia | 局在形の探索には優れるが、保存則がなく、有限資源下の維持という v0 の中心問いが弱い。[1] [5] | 保存場が安定形を見つけられず、まず 3D 局在パターン探索の基準が必要になった場合。 |
+| Particle Lenia | 3D と保存の明確な先例だが、内部連続場を同じ基質に保つ v0 の焦点からやや外れる。[5] | 密な場の 3D コストが実測で許容できない場合、または物質離散性そのものが鍵だと分かった場合。 |
+| 反応拡散 | 代謝風のチャネル設計を早期に増やし、局在個体の不在が規則の問題か探索の問題かを切り分けにくい。[7] | 保存場で持続候補が得られ、次に触媒・反応速度・拡散差を独立検証するとき。 |
+| 人工化学 | 反応種と規則の意味を設計し過ぎる危険があり、最初の基質選択としては自由度が大きい。[8] | 再現性ある自己維持候補が出て、物質変換・廃棄・継承を導入する段階。 |
+| ハイブリッド | 場・粒子間の交換規則が新たな仮定となり、結果の原因を追いにくい。 | 単独の保存場と粒子モデルを共通指標で比較した後。 |
+
+### 選択した方式がまだできないこと
+
+v0 は、完全な代謝、化学的閉包、DNA に相当する情報担体、進化可能な継承、または OEE を実証しない。保存された物質と資源場があることは、自己生産を保証しない。局在構造が勾配へ移動しても、それが「飢え」「目的」「認知」を持つとは言えない。分裂らしい現象があっても、変異が継承され差次的に持続しない限り進化ではない。[15] [16]
+
+また、v0 の個体検出器は観測装置であり、検出されないものが存在しないこと、検出されたものが真の生物であることを意味しない。複数の閾値、初期条件、摂動、実装精度にわたり再現することが、最初の最低条件となる。[17]
+
+### 概略的なブラウザ／GPU 実装戦略
+
+ブラウザは WebGPU の機能を検出し、利用可能なストレージテクスチャ寸法と float16 の可用性に応じて `64³` から開始する。二組の 3D 状態テクスチャを GPU に保持し、1 ステップごとに近傍演算、反応・変換、保存補正を compute pass で実行して読み書きを交換する。観測用には、各ステップまたは間引きステップで低解像度の投影・閾値・統計を別テクスチャへ作る。[19] [20]
+
+可視化は、(1) 3 枚の可動スライス面、(2) 軸ごとの最大値または積分投影、(3) 閾値化した低解像度のボリューム表示、の順で用意する。これにより外形だけでは見えない内部チャネルの分布を、重いメッシュ抽出なしに確認できる。アイソサーフェス、レイマーチング、粒子化は、最初の実験の指標を改善すると示された場合にのみ導入する。[20]
+
+### 最小 v0 実験
+
+1. `64³` の周期境界または明示的な境界条件を持つ世界に、総量一定の `M` と少量の局在摂動を置く。
+2. `M` の再配置を保存しつつ、`R` が局所的に回復・拡散し、`M` の維持または移動と結合する最小則を用意する。`R` の利用は `M` または `C` の局所状態を通じてしか起きず、個体変数は置かない。
+3. 同一総量のランダム初期条件、単独塊、複数塊を多数のシードで実行し、個体候補の寿命、質量、重心、内部比率を記録する。
+4. 長寿命候補が出たら、局所質量除去、内部チャネル攪乱、資源勾配の反転、資源遮断を行い、無摂動対照と比較する。
+5. 結果をスライス、投影、低解像度ボリューム、時系列統計で保存し、見栄えの良い一例だけで判断しない。
+
+### 「追究する価値がある」と判断する基準
+
+v0 の価値は、豪華な 3D 表示や単発の glider に置かない。次の条件が**複数シード、複数の小さな実装誤差・初期値変動、複数の観測閾値**で同時に満たされるとき、次の段階へ進む価値がある。
+
+| 基準 | 合格の意味 | 不合格なら示すこと |
+| --- | --- | --- |
+| 再現する局在 | ランダム初期条件の一部から、背景と区別できる長寿命の凝集が複数回出る。 | 規則が局在形を支えない、または探索が狭すぎる。 |
+| 収支の健全性 | 総物質量の保存または明示的な収支が数値的に保たれ、無制限増殖・即時全滅に依存しない。 | 数値誤差または規則の不安定性が見かけの現象を作っている。 |
+| 摂動後の差 | 同じ初期条件の非組織化対照より、候補が質量・形・内部状態の少なくとも一部を有意に回復する。 | 単に受動的な安定構造であり、自己維持候補ではない。 |
+| 資源との機能的結合 | 資源勾配の向きや利用可能性を変えると、移動・持続・内部組織が予測可能に変化する。 | 行動らしい変化がランダムドリフトまたは可視化の錯覚である。 |
+| 観測に対する頑健性 | 閾値や粗視化を変えても、長寿命候補と主要な結論が消えない。 | 「個体」が解析パイプラインの産物に過ぎる。 |
+
+## 7. 明示的に残る不確実性
+
+第一に、3D Flow-Lenia 型保存場が、Particle Lenia のような比較的明瞭な移動構造を、小さなブラウザ用ボリュームで発見できるかは未実証である。保存と内部構造という概念的利点はあるが、それが探索可能性・頑健性・性能へ直結するとは限らない。[3] [5]
+
+第二に、資源場への偏った移動を「資源探索」と呼べる条件は未確定である。勾配に沿う受動的な輸送と、局在構造が自らの維持を通じて示す機能的な応答を区別するには、結合の切断、勾配反転、摂動、長期対照が必要である。[12] [14]
+
+第三に、個体性の検出は根本的に尺度依存である。連結成分は実用的な v0 の観測器だが、情報理論的個体性を十分に近似するとは限らない。粒度や閾値を変えたときに残る構造と、より高価な時間的一貫性分析との対応を後続課題とする。[17]
+
+第四に、再生産、継承、進化、OEE は v0 の成功条件に含めない。これらは局在と自己維持候補が再現性を持って得られた後に、局在パラメータのコピー・変異・系譜と有限資源下の差次的持続を導入して検証するべきである。[15] [16] [18]
+
+## References
+
+[1]: https://arxiv.org/abs/1812.05433 "B. W.-C. Chan (2019), Lenia — Biology of Artificial Life"
+[2]: https://arxiv.org/abs/2005.03742 "B. W.-C. Chan (2020), Lenia and Expanded Universe"
+[3]: https://arxiv.org/abs/2212.07906 "E. Plantec et al. (2023), Flow-Lenia: Towards open-ended evolution in cellular automata through mass conservation and parameter localization"
+[4]: https://direct.mit.edu/artl/article/31/2/228/130572/Flow-Lenia-Emergent-Evolutionary-Dynamics-in-Mass "E. Plantec et al. (2025), Flow-Lenia: Emergent Evolutionary Dynamics in Mass Conservative Continuous Cellular Automata"
+[5]: https://google-research.github.io/self-organising-systems/particle-lenia/ "A. Mordvintsev, E. Niklasson, and E. Randazzo (2022), Particle Lenia and the energy-based formulation"
+[6]: https://arxiv.org/abs/2305.16706 "K. Horibe et al. (2023), Exploring the Adaptive Behaviors of Particle Lenia"
+[7]: https://pmc.ncbi.nlm.nih.gov/articles/PMC2882887/ "I. Hecht, D. A. Kessler, and H. Levine (2010), Transient Localized Patterns in Noise-Driven Reaction-Diffusion Systems"
+[8]: https://direct.mit.edu/artl/article/7/3/225/2373/Artificial-Chemistries-A-Review "P. Dittrich, J. Ziegler, and W. Banzhaf (2001), Artificial Chemistries—A Review"
+[9]: https://direct.mit.edu/artl/article/15/1/105/2623/Swarm-Chemistry "H. Sayama (2009), Swarm Chemistry"
+[10]: https://www.karlsims.com/papers/siggraph94.pdf "K. Sims (1994), Evolving Virtual Creatures"
+[11]: https://journals.sagepub.com/doi/10.1177/105971239500300405 "R. D. Beer (1995), On the Dynamics of Small Continuous-Time Recurrent Neural Networks"
+[12]: https://www.sciencedirect.com/science/article/abs/pii/S0531513106001415 "R. Pfeifer and G. Gómez (2007), Morphological Computation for Adaptive Behavior and Cognition"
+[13]: https://distill.pub/2020/growing-ca/ "A. Mordvintsev et al. (2020), Growing Neural Cellular Automata"
+[14]: https://developmentalsystems.org/sensorimotor-lenia/ "G. Hamon et al., Learning Sensorimotor Agency in Cellular Automata"
+[15]: https://pmc.ncbi.nlm.nih.gov/articles/PMC2442389/ "R. V. Solé et al. (2007), Synthetic protocell biology: from reproduction to computation"
+[16]: https://direct.mit.edu/artl/article/22/3/408/2841/Open-Ended-Evolution-Perspectives-from-the-OEE "T. Taylor et al. (2016), Open-Ended Evolution: Perspectives from the OEE Workshop in York"
+[17]: https://pmc.ncbi.nlm.nih.gov/articles/PMC7244620/ "D. Krakauer et al. (2020), The information theory of individuality"
+[18]: https://alife.org/encyclopedia/introduction/open-ended-evolution/ "International Society for Artificial Life, Open-Ended Evolution"
+[19]: https://www.w3.org/TR/webgpu/ "W3C WebGPU Specification"
+[20]: https://threejs.org/docs/pages/Storage3DTexture.html "Three.js Storage3DTexture documentation"
+[21]: https://chakazul.github.io/lenia.html "B. W.-C. Chan, Lenia project page"
+[22]: https://doi.org/10.1016/0303-2647(74)90031-8 "F. J. Varela, H. R. Maturana, and R. Uribe (1974), Autopoiesis: The Organization of Living Systems, Its Characterization and a Model"

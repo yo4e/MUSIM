@@ -19,11 +19,22 @@ Rather than representing a creature as a conventional object with explicit varia
 - What conditions allow persistence, self-maintenance, reproduction, variation, and open-ended evolution?
 - How should we define an individual when boundaries themselves are emergent?
 
+## Research positioning
+
+The broad ingredients above have substantial prior art. MUSIM does **not** claim novelty merely from continuous artificial life, 3D Lenia-like worlds, emergent agency, mass conservation, resource fields, or parameter search individually.
+
+The current novelty hypothesis is the integrated experimental regime: a true-3D dense conserved field with environmental resource flow and optional same-substrate internal state, no predefined agents or fixed individual boundaries, and controlled evaluation of persistence, perturbation recovery, and functional resource coupling.
+
+See:
+
+- [`docs/prior-art.md`](docs/prior-art.md) — prior-art survey and substrate choice
+- [`docs/research-positioning-2026.md`](docs/research-positioning-2026.md) — what is already established, what MUSIM may contribute, and claims to avoid
+
 ## Chosen v0 substrate
 
-The prior-art survey selected a **Flow-Lenia-inspired, mass-conserving, multi-channel continuous field** as the first experimental substrate. See [`docs/prior-art.md`](docs/prior-art.md).
+The first experimental substrate is a **Flow-Lenia-inspired, mass-conserving, multi-channel continuous field** in a small true-3D voxel world.
 
-The choice is conceptual rather than a claim that existing Flow-Lenia work already demonstrates MUSIM's intended 3D system. Flow-Lenia motivates conservative transport and localized state. MUSIM's first experiment adds project-specific resource/internal-state candidates and treats the true-3D extension itself as a hypothesis to test.
+The choice is conceptual rather than a claim that existing Flow-Lenia work already demonstrates MUSIM's intended 3D system. Flow-Lenia motivates affinity-driven conservative transport and localized state. MUSIM's resource/internal-state channels and true-3D experimental regime are project-specific hypotheses to test.
 
 The initial channels are:
 
@@ -33,20 +44,22 @@ The initial channels are:
 
 There is deliberately no `Creature` class and no individual ID in the simulation state.
 
-## Current v0 reference implementation
+## Current v0 CPU reference
 
-The first implementation slice is a CPU reference model used as a test oracle before the WebGPU compute version:
+The first browser slice proved the infrastructure: periodic 3D state, deterministic seeds, conservation checks, metrics, a cheap central slice observer, and GitHub Pages deployment.
 
-- periodic 3D grid
-- conservative pairwise transport for `M`
-- resource diffusion, recovery, and local depletion for `R`
-- simple local catalyst dynamics for `C`
-- deterministic single-blob, two-blob, and noise seeds
-- matter/resource/catalyst totals, centroid, and occupied-volume metrics
-- a cheap central orthogonal slice for observation
-- conservation tests
+A subsequent design review separated that initial diffusion-dominated rule from the scientific reference dynamics. The current CPU reference now uses:
 
-The CPU rule is **not** presented as Flow-Lenia itself. It is a deliberately inspectable MUSIM reference rule implementing the design constraints selected by the research phase.
+- a normalized isotropic shell convolution over `M`;
+- a smooth local target-density response to form an affinity field;
+- affinity differences plus concentration pressure to define local flow preferences;
+- bounded six-neighbor redistribution that conserves matter without a world-wide correction;
+- a clean default `M`-only baseline with uniform, non-coupled `R` and disabled `C`;
+- a separate resource-coupled experiment in which `R` modifies local affinity conditions rather than injecting a direct “seek resource” command;
+- periodic-aware centroid measurement;
+- tests for conservation, non-negativity, locality, symmetry, determinism, and periodic observation.
+
+This implementation is **Flow-Lenia-inspired, not a literal Flow-Lenia implementation**. It uses a simpler local voxel transport scheme rather than published reintegration tracking. See [`docs/v0-reference.md`](docs/v0-reference.md) for the exact contract.
 
 ### Run locally
 
@@ -57,7 +70,12 @@ npm run typecheck
 npm run dev
 ```
 
-The current browser view is an observation/debugging instrument, not the final visualization.
+The browser offers two explicit conditions:
+
+- **M-only baseline** — `R` is uniform and does not feed back into `M`; `C` is disabled.
+- **resource-coupled** — an `R` gradient, local resource consumption/recovery, and resource-dependent affinity are enabled as a controlled experiment.
+
+The current browser view is an observation/debugging instrument, not the final visualization. The simulation is 3D even though the default observer shows a central 2D slice.
 
 ## Technical direction
 
@@ -68,16 +86,16 @@ continuous simulation layer
     ↓
 3D scalar / vector fields
     ↓
-CPU reference oracle → WebGPU compute
+CPU scientific reference → WebGPU compute
     ↓
-Three.js / browser visualization
+browser visualization
     ↓
 volume slices / projections / later isosurfaces
     ↓
 human + metric observation
 ```
 
-The WebGPU stage should keep the dense 3D state on the GPU, use fixed-step ping-pong updates, and compare small fixtures against the CPU reference implementation. Full-volume readback should not be part of the per-frame path.
+WebGPU is intentionally downstream of the CPU reference review. The stable GPU version should keep dense 3D state on the GPU, use fixed-step ping-pong updates, compare small fixtures against the CPU implementation, and avoid full-volume readback on the per-frame path.
 
 ## Design principle
 
@@ -109,4 +127,4 @@ No variable needs to be called “hunger.” If an observer nevertheless wants t
 
 **v0 implementation / experiment phase.**
 
-Prior-art survey and substrate selection are complete. The current task is Issue #3: implement and validate the first conserved 3D field experiment, then port the stable reference dynamics to WebGPU.
+Issue #3 is the durable project-level restart point. Issue #7 is the current implementation unit: refine and validate the CPU scientific reference dynamics before any WebGPU port.

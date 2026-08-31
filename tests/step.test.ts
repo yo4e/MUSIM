@@ -32,6 +32,18 @@ describe('v0 conserved field reference model', () => {
     expect(state.matter[index3D(0, 0, 3, state.size)]).toBeGreaterThan(0);
   });
 
+  it('supports a z=1 low-dimensional reference fixture with the same rule', () => {
+    let state = createState({ x: 8, y: 8, z: 1 });
+    state.resource.fill(1);
+    state.matter[index3D(4, 4, 0, state.size)] = 1;
+    const initial = total(state.matter);
+
+    for (let i = 0; i < 25; i += 1) state = stepReference(state);
+
+    expect(total(state.matter)).toBeCloseTo(initial, 4);
+    expect(state.matter.every(Number.isFinite)).toBe(true);
+  });
+
   it('allows an open resource channel without changing matter conservation', () => {
     let state = createState({ x: 6, y: 6, z: 6 });
     state.resource.fill(0.5);

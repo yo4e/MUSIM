@@ -1,11 +1,9 @@
-# Preview deployments are enabled on the v0 feature branch until PR #4 is merged.
 name: Deploy MUSIM v0 to GitHub Pages
 
 on:
   push:
     branches:
       - main
-      - feat/v0-conserved-3d-field
   workflow_dispatch:
 
 permissions:

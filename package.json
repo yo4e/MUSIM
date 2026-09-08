@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
     "test": "vitest run",
-    "experiment:cpu": "tsx scripts/cpu-sweep.ts"
+    "experiment:cpu": "tsx scripts/cpu-sweep.ts",
+    "experiment:damage": "tsx scripts/cpu-perturbation.ts"
   },
   "devDependencies": {
     "tsx": "^4.23.13",

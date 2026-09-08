@@ -131,6 +131,8 @@ function render(): void {
     <div><dt>resource</dt><dd>${m.resourceTotal.toFixed(2)}</dd></div>
     <div><dt>catalyst</dt><dd>${m.catalystTotal.toFixed(3)}</dd></div>
     <div><dt>occupied cells</dt><dd>${m.occupiedCells}</dd></div>
+    <div><dt>effective volume</dt><dd>${m.effectiveVolume.toFixed(1)}</dd></div>
+    <div><dt>peak matter</dt><dd>${m.peakMatter.toFixed(4)}</dd></div>
     <div><dt>periodic centroid</dt><dd>${m.centroid.x.toFixed(1)}, ${m.centroid.y.toFixed(1)}, ${m.centroid.z.toFixed(1)}</dd></div>
   `;
 }

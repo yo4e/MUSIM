@@ -7,6 +7,8 @@ export type SimMetrics = Readonly<{
   catalystTotal: number;
   centroid: Readonly<{ x: number; y: number; z: number }>;
   occupiedCells: number;
+  effectiveVolume: number;
+  peakMatter: number;
 }>;
 
 function periodicMean(
@@ -36,12 +38,16 @@ export function measure(state: SimState, threshold = 1e-4): SimMetrics {
   let sinZ = 0;
   let cosZ = 0;
   let occupiedCells = 0;
+  let matterSquaredTotal = 0;
+  let peakMatter = 0;
 
   for (let z = 0; z < state.size.z; z += 1) {
     for (let y = 0; y < state.size.y; y += 1) {
       for (let x = 0; x < state.size.x; x += 1) {
         const m = state.matter[index3D(x, y, z, state.size)];
         if (m > threshold) occupiedCells += 1;
+        matterSquaredTotal += m * m;
+        peakMatter = Math.max(peakMatter, m);
         arithmeticX += x * m;
         arithmeticY += y * m;
         arithmeticZ += z * m;
@@ -71,5 +77,9 @@ export function measure(state: SimState, threshold = 1e-4): SimMetrics {
       z: periodicMean(sinZ, cosZ, arithmeticZ, matterTotal, state.size.z),
     },
     occupiedCells,
+    effectiveVolume: matterSquaredTotal > 0
+      ? matterTotal * matterTotal / matterSquaredTotal
+      : 0,
+    peakMatter,
   };
 }

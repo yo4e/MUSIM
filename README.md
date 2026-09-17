@@ -128,3 +128,7 @@ No variable needs to be called “hunger.” If an observer nevertheless wants t
 **v0 implementation / experiment phase.**
 
 Issue #3 is the durable project-level restart point. Issue #7 is the current implementation unit: refine and validate the CPU scientific reference dynamics before any WebGPU port.
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
